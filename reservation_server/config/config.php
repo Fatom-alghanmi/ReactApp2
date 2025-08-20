@@ -1,10 +1,9 @@
 <?php
-// Define configuration options
+// CORS configuration
 $allowedOrigins = ['http://localhost:3000'];
 $allowedHeaders = ['Content-Type'];
 $allowedMethods = ['GET', 'POST', 'OPTIONS'];
 
-// Set headers for CORS
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 if (in_array($origin, $allowedOrigins)) {
     header('Access-Control-Allow-Origin: ' . $origin);
@@ -16,10 +15,11 @@ if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
 
 if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
     $requestHeaders = explode(',', $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']);
-    $requestHeaders = array_map('trim', $requestHeaders); // Trim whitespace from headers
+    $requestHeaders = array_map('trim', $requestHeaders);
     if (count(array_intersect($requestHeaders, $allowedHeaders)) == count($requestHeaders)) {
         header('Access-Control-Allow-Headers: ' . implode(', ', $allowedHeaders));
     }
 }
 
-?>
+// Optional: JSON content type for all responses
+header('Content-Type: application/json');

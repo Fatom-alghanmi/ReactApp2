@@ -3,7 +3,7 @@
 $dbHost = 'localhost';
 $dbUsername = 'root';
 $dbPassword = '';
-$dbName = "reservations__db";
+$dbName = "reservations_db";  // 👈 change to your reservations database
 
 // Create a connection
 $conn = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
@@ -12,7 +12,4 @@ $conn = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
-
-
 ?>
