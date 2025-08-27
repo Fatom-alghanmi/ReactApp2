@@ -23,7 +23,7 @@ const Navbar = () => {
                             <Link className="nav-link" to="/create-reservation">Add Reservation</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/reservation-list">Reservation List</Link>
+                            <Link className="nav-link" to="/">Reservation List</Link>
                         </li>
                     </ul>
                 </div>

@@ -1,39 +1,108 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-function ReservationList({ reservations, onToggleBooked }) {
+function ReservationList() {
+  const [reservations, setReservations] = useState([]);
+  const [expandedId, setExpandedId] = useState(null);
+
+  useEffect(() => {
+    fetchReservations();
+  }, []);
+
+  const fetchReservations = () => {
+    fetch("http://localhost/reactapp2/reservation_server/api/reservations.php")
+      .then(res => res.json())
+      .then(data => setReservations(data))
+      .catch(err => console.error(err));
+  };
+
+  const toggleExpand = (id) => {
+    setExpandedId(expandedId === id ? null : id);
+  };
+
+  const handleBookedChange = (reservationID, currentBooked) => {
+    // Make sure it's a number 0 or 1
+    const newBooked = Number(!Number(currentBooked));
+  
+    fetch("http://localhost/reactapp2/reservation_server/api/toggle-booked.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ reservationID, booked: newBooked }),
+    })
+    .then(res => res.json())
+    .then(() => fetchReservations())
+    .catch(err => console.error(err));
+  };
+  
+
   return (
-    <div className="container mt-4">
-      <h2>Reservation List</h2>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Area</th>
-            <th>Date</th>
-            <th>Time Slot</th> {/* Add this */}
-            <th>Booked</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reservations.map((reservation) => (
-            <tr key={reservation.id}>
-              <td>{reservation.name}</td>
-              <td>{reservation.area}</td>
-              <td>{reservation.reservation_date}</td>
-              <td>{reservation.time_slot}</td> {/* Add this */}
-              <td>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 1fr)",
+        gap: "20px",
+        padding: "20px"
+      }}
+    >
+      {reservations.map((res) => (
+        <div
+          key={res.reservationID}
+          style={{
+            border: "1px solid #ccc",
+            padding: "15px",
+            borderRadius: "10px",
+            backgroundColor: "#f8f9fa"
+          }}
+        >
+          <h3>{res.name} - {res.reservation_date}</h3>
+          {expandedId === res.reservationID ? (
+            <>
+              <p>Area: {res.area}</p>
+              <p>Time Slot: {res.time_slot}</p>
+              <label>
                 <input
                   type="checkbox"
-                  checked={reservation.booked}
-                  onChange={() => onToggleBooked(reservation.id)}
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  checked={res.booked === "1" || res.booked === 1}
+                  onChange={() => handleBookedChange(res.reservationID, res.booked)}
+                />{" "}
+                Booked
+              </label>
+              <br />
+              <button
+                style={{
+                  backgroundColor: "#0d6efd",
+                  color: "white",
+                  padding: "8px 15px",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  marginTop: "5px"
+                }}
+                onClick={() => toggleExpand(res.reservationID)}
+              >
+                Read Less
+              </button>
+            </>
+          ) : (
+            <button
+              style={{
+                backgroundColor: "#0d6efd",
+                color: "white",
+                padding: "8px 15px",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+                marginTop: "5px"
+              }}
+              onClick={() => toggleExpand(res.reservationID)}
+            >
+              Read More
+            </button>
+          )}
+        </div>
+      ))}
     </div>
   );
+  
 }
 
 export default ReservationList;

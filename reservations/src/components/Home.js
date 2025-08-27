@@ -1,10 +1,11 @@
 import React from "react";
+import ReservationList from "./ReservationList";
 
 function Home() {
   return (
-    <div className="container mt-4">
-      <h2>Welcome to the Reservation App</h2>
-      <p>Use the menu above to add a reservation or check the list.</p>
+    <div>
+      <h2>Reservations</h2>
+      <ReservationList />
     </div>
   );
 }

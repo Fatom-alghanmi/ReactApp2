@@ -24,25 +24,22 @@ function App() {
 
   return (
     <div className="App">
+      <div className="App-header">
+        <h1>Reservation App</h1>
+        <p>Manage your reservations easily!</p>
+      </div>
       <BrowserRouter>
         <Navbar />
         <Routes>
-          {/* Home page */}
           <Route path="/" element={<Home />} />
-
-          {/* Add Reservation */}
           <Route
             path="/create-reservation"
             element={<CreateReservation onAddReservation={addReservation} />}
           />
-
-          {/* Single Reservation view */}
           <Route
             path="/reservation/:id"
             element={<Reservation reservations={reservations} />}
           />
-
-          {/* Reservation List */}
           <Route
             path="/reservation-list"
             element={

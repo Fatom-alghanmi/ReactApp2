@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 
-function CreateReservation({ onAddReservation }) {
+function CreateReservation() {
   const [name, setName] = useState("");
-  const [area, setArea] = useState("");                 // <-- added
-  const [reservationDate, setReservationDate] = useState("");  // <-- added
+  const [area, setArea] = useState("");
+  const [reservationDate, setReservationDate] = useState("");
   const [timeSlot, setTimeSlot] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,48 +15,35 @@ function CreateReservation({ onAddReservation }) {
       return;
     }
 
-    const newReservation = {
-      id: Date.now(),
-      name,
-      area,
-      reservation_date: reservationDate,
-      time_slot: timeSlot,
-      booked: false,
-    };
-
-    onAddReservation(newReservation);
-
-    setName("");
-    setArea("");                  // <-- added
-    setReservationDate("");       // <-- added
-    setTimeSlot("");
+    fetch("http://localhost/reactapp2/reservation_server/api/create-reservation.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        area,
+        reservation_date: reservationDate,
+        time_slot: timeSlot
+      }),
+    })
+    .then(res => res.json())
+    .then(data => {
+      setMessage(data.message);
+      setName("");
+      setArea("");
+      setReservationDate("");
+      setTimeSlot("");
+    })
+    .catch(err => console.error(err));
   };
 
   return (
-    <div className="form-container">
+    <div>
       <h2>Add Reservation</h2>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Enter Area"
-          value={area}                          // <-- added
-          onChange={(e) => setArea(e.target.value)}  // <-- added
-        />
-        <input
-          type="date"
-          value={reservationDate}               // <-- added
-          onChange={(e) => setReservationDate(e.target.value)} // <-- added
-        />
-        <select
-          value={timeSlot}
-          onChange={(e) => setTimeSlot(e.target.value)}
-        >
+        <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
+        <input type="text" placeholder="Area" value={area} onChange={e => setArea(e.target.value)} />
+        <input type="date" value={reservationDate} onChange={e => setReservationDate(e.target.value)} />
+        <select value={timeSlot} onChange={e => setTimeSlot(e.target.value)}>
           <option value="">Select Time Slot</option>
           <option value="9:00-12:00">9:00-12:00</option>
           <option value="12:00-3:00">12:00-3:00</option>
@@ -63,6 +51,7 @@ function CreateReservation({ onAddReservation }) {
         </select>
         <button type="submit">Add Reservation</button>
       </form>
+      {message && <p>{message}</p>}
     </div>
   );
 }
