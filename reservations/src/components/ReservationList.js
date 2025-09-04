@@ -20,19 +20,17 @@ function ReservationList() {
   };
 
   const handleBookedChange = (reservationID, currentBooked) => {
-    // Make sure it's a number 0 or 1
     const newBooked = Number(!Number(currentBooked));
-  
+
     fetch("http://localhost/reactapp2/reservation_server/api/toggle-booked.php", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ reservationID, booked: newBooked }),
     })
-    .then(res => res.json())
-    .then(() => fetchReservations())
-    .catch(err => console.error(err));
+      .then(res => res.json())
+      .then(() => fetchReservations())
+      .catch(err => console.error(err));
   };
-  
 
   return (
     <div
@@ -54,55 +52,69 @@ function ReservationList() {
           }}
         >
           <h3>{res.name} - {res.reservation_date}</h3>
+
           {expandedId === res.reservationID ? (
-            <>
-              <p>Area: {res.area}</p>
-              <p>Time Slot: {res.time_slot}</p>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={res.booked === "1" || res.booked === 1}
-                  onChange={() => handleBookedChange(res.reservationID, res.booked)}
-                />{" "}
-                Booked
-              </label>
-              <br />
-              <button
-                style={{
-                  backgroundColor: "#0d6efd",
-                  color: "white",
-                  padding: "8px 15px",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  marginTop: "5px"
-                }}
-                onClick={() => toggleExpand(res.reservationID)}
-              >
-                Read Less
-              </button>
-            </>
-          ) : (
-            <button
-              style={{
-                backgroundColor: "#0d6efd",
-                color: "white",
-                padding: "8px 15px",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-                marginTop: "5px"
-              }}
-              onClick={() => toggleExpand(res.reservationID)}
-            >
-              Read More
-            </button>
-          )}
+  <>
+    {/* Small thumbnail */}
+    <img
+      src={`http://localhost/reactapp2/reservation_server/api/uploads/${res.imageName || 'placeholder_100.jpg'}`}
+      alt="Conservation Area"
+      style={{
+        width: "150px",           // small width
+        height: "100px",          // small height
+        objectFit: "contain",     // show full image without cropping
+        borderRadius: "6px",
+        backgroundColor: "#f0f0f0",
+        marginBottom: "10px"
+      }}
+    />
+    <p>Area: {res.area}</p>
+    <p>Time Slot: {res.time_slot}</p>
+    <label>
+      <input
+        type="checkbox"
+        checked={res.booked === "1" || res.booked === 1}
+        onChange={() => handleBookedChange(res.reservationID, res.booked)}
+      />{" "}
+      Booked
+    </label>
+    <br />
+    <button
+      style={{
+        backgroundColor: "#0d6efd",
+        color: "white",
+        padding: "8px 15px",
+        border: "none",
+        borderRadius: "6px",
+        cursor: "pointer",
+        marginTop: "5px",
+      }}
+      onClick={() => toggleExpand(res.reservationID)}
+    >
+      Read Less
+    </button>
+  </>
+) : (
+  <button
+    style={{
+      backgroundColor: "#0d6efd",
+      color: "white",
+      padding: "8px 15px",
+      border: "none",
+      borderRadius: "6px",
+      cursor: "pointer",
+      marginTop: "5px",
+    }}
+    onClick={() => toggleExpand(res.reservationID)}
+  >
+    Read More
+  </button>
+)}
+
         </div>
       ))}
     </div>
   );
-  
 }
 
 export default ReservationList;
