@@ -34,11 +34,14 @@ function CreateReservation() {
       const response = await axios.post(
         "http://localhost/reactapp2/reservation_server/api/create-reservation.php",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true // important for session-based admin check
+        }
       );
 
       console.log(response.data);
-      navigate("/"); // go back to list
+      navigate("/"); // go back to reservation list
     } catch (err) {
       console.error(err);
       setError("Failed to create reservation.");

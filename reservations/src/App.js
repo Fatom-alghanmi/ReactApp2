@@ -1,57 +1,29 @@
-import React, { useState } from 'react';
-import './App.css';
-import Navbar from './components/Navbar';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import CreateReservation from './components/CreateReservation';
-import Reservation from './components/Reservation';
-import ReservationList from './components/ReservationList';
-import Home from './components/Home';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext"; // import provider
+import Navbar from "./components/Navbar";
+import Home from "./components/Home";
+import CreateReservation from "./components/CreateReservation";
+import Reservation from "./components/Reservation";
+import ReservationList from "./components/ReservationList";
+import Register from "./components/Register";
+import Login from "./components/Login";
 
 function App() {
-  const [reservations, setReservations] = useState([]);
-
-  const addReservation = (reservation) => {
-    setReservations([...reservations, reservation]);
-  };
-
-  const toggleBooked = (id) => {
-    setReservations(
-      reservations.map((res) =>
-        res.id === id ? { ...res, booked: !res.booked } : res
-      )
-    );
-  };
-
   return (
-    <div className="App">
-      <div className="App-header">
-        <h1>Reservation App</h1>
-        <p>Manage your reservations easily!</p>
-      </div>
+    <AuthProvider>
       <BrowserRouter>
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route
-            path="/create-reservation"
-            element={<CreateReservation onAddReservation={addReservation} />}
-          />
-          <Route
-            path="/reservation/:id"
-            element={<Reservation reservations={reservations} />}
-          />
-          <Route
-            path="/reservation-list"
-            element={
-              <ReservationList
-                reservations={reservations}
-                onToggleBooked={toggleBooked}
-              />
-            }
-          />
+          <Route path="/create-reservation" element={<CreateReservation />} />
+          <Route path="/reservation/:id" element={<Reservation />} />
+          <Route path="/reservation-list" element={<ReservationList />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </BrowserRouter>
-    </div>
+    </AuthProvider>
   );
 }
 

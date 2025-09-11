@@ -1,18 +1,35 @@
 <?php
 session_start();
 
+// CORS headers
 header("Access-Control-Allow-Origin: http://localhost:3000");
+header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json");
 
-require_once('../config/database.php');
-
+// Handle preflight OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
+
+// Only allow POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+    exit();
+}
+
+// Require user to be logged in (admin not required here)
+if (!isset($_SESSION['user'])) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Unauthorized: Login required']);
+    exit();
+}
+
+require_once('../config/config.php');
+require_once('../config/database.php');
 
 // Validate required fields
 if (!isset($_POST['name'], $_POST['area'], $_POST['reservation_date'], $_POST['time_slot'])) {
@@ -21,6 +38,7 @@ if (!isset($_POST['name'], $_POST['area'], $_POST['reservation_date'], $_POST['t
     exit();
 }
 
+// sanitize inputs
 $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
 $area = filter_var($_POST['area'], FILTER_SANITIZE_STRING);
 $reservation_date = filter_var($_POST['reservation_date'], FILTER_SANITIZE_STRING);
@@ -66,4 +84,3 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
-?>
